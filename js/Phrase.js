@@ -4,45 +4,46 @@
 
 class Phrase {
     constructor(phrase) {
-        this.phrase = phrase;
-    }
-// Separate letters and spaces into individual <li> elements.
+        this.phrase = phrase.toLowerCase();
+    };
+    
+    // Adds letter placeholders to the display when the game starts.  
     addPhraseToDisplay() {
-        const li = document.createElement('LI');
-        const array = [...this.phrase];
-        array.forEach(character => {
-            const li = document.createElement('LI');
-            if (character == " ") {
-                li.className = 'hide space';
+        const phrase = this.phrase;
+        const phraseUl = document.querySelector('#phrase ul');
+        
+        for (let i = 0; i < phrase.length; i++) {
+            let letter = phrase[i];
+            const letterLi = document.createElement('li');
+                        
+            if(letter === ' ') {
+                letterLi.className = 'space';
+                letterLi.textContent = ' ';
             } else {
-                li.className = 'hide letter';
-            }
-            li.textContent = character;
-            phraseDiv.appendChild(li);
-        })
-    };
-// Determines if guessed letter is found in the activePhrase.
+                letterLi.className = `hide letter ${letter}`;
+                letterLi.textContent = `${letter}`;
+            };
+
+            phraseUl.appendChild(letterLi);
+        };
+        return phrase;
+    }; 
+
+    // Checks to see if the letter selected by the player matches a letter in the phrase.
+    // @param {string} letter - letter to check
+    // @return {boolean} - true if the phrase includes the letter / false if not
     checkLetter(letter) {
-        const array = [...this.phrase];
-        let occurs = 0;
-        array.forEach(character => {
-            if (letter === character) {
-                occurs += 1;
-            }
-        })
-        if (occurs > 0) {
-            return true
-        } 	else {
-                return false
-            }
+        return this.phrase.includes(letter);
     };
-// Reveals letter(s) on the screen.
+
+    // Reveals the letter(s) on the board that matches the player's selection.
+    // @param {string} letter - selected letter to display
     showMatchedLetter(letter) {
-        for (let i = 0; i < phraseDivUl.length; i++) {
-            if (letter == phraseDivUl[i].textContent) {
-                phraseDivUl[i].className = 'show letter animate__animated animate__flipInY';
-                phraseDivUl[i].style.setProperty('--animate-duration', '0.7s');
-            }
-        }
-    };
-}
+        const matchingListItems = document.getElementsByClassName(letter);
+        for (let i = 0; i < matchingListItems.length; i++) {
+            let matchedLi = matchingListItems[i];
+            matchedLi.classList.remove('hide');
+            matchedLi.classList.add('show');
+        };
+    };    
+ };
