@@ -4,50 +4,42 @@
  * app.js */
 
 
-const phraseDivUl = document.getElementById('phrase').firstElementChild.children;
-const phraseDiv = document.getElementById('phrase').firstElementChild;
-const qwertyKeys = document.querySelectorAll('.key');
-const btn = document.getElementById('btn__reset');
-const goodHeart = document.querySelectorAll('.tries');
-const goMessage = document.querySelector('#game-over-message');
-var phrase;
-var game;
+let game;
+ const startGameButton = document.querySelector('#btn__reset');
+ const keyboardDiv = document.querySelector('#qwerty');
+ const keysArray = document.querySelectorAll('.key');
+ const overlayDiv = document.querySelector('#overlay');
 
-// // Intial setup.
-overlay.style.zIndex = 1000;
-goMessage.classList.add('animate__animated', 'animate__tada');
-goMessage.style.setProperty('--animate-duration', '1.0s');
-// Creates new game to start.
-btn.addEventListener('click', () => {
-	phraseDiv.innerHTML = '';
-	game = new Game();
-	game.startGame();
-	btn.disabled = true;
-});
-// Listens for inputs from  onscreen keyboard.
-for (let i = 0; i < qwertyKeys.length; i++) {
-	qwertyKeys[i].addEventListener('click', (e) => {
-		let button = e.target;
-		game.handleInteraction(button.textContent);
-	})
-}
 
-/* 	Accepts physical keyboard letter inputs for gameplay; ignores repeat inputs.
- Use 'return' or 'spacebar' to start game.
-To get characters from keycodes:
- https://stackoverflow.com/questions/48254843/converting-javascript-key-code-to-char-and-vice-versa
-*/
-document.addEventListener("keydown", (k) => {
-	let keyValue = k.keyCode;
-	let keyChar = String.fromCharCode(k.keyCode).toLowerCase();
-	for (let i = 0; i < qwertyKeys.length; i++) {
-		if (keyChar === qwertyKeys[i].textContent) {
-			if (qwertyKeys[i].className === 'key') {
-				game.handleInteraction(keyChar);
-			}
-		}
-	}
-	if (keyValue === 13 || keyValue === 32) {
-			btn.click();
-	}
-});
+ // Adds a click event listener to the 'Start Game' button, which creates a new instance of the game.
+ startGameButton.addEventListener('click', () => {
+    game = new Game();
+    game.startGame();
+ });
+
+ // Adds click event listeners to each of the onscreen keyboard buttons.
+ keyboardDiv.addEventListener('click', (e) => {
+   if(e.target.className === 'key') {
+      game.handleInteraction(e.target);
+   };
+ });
+
+
+ // Adds event listeners to physical keyboard keys and START GAME button.
+ document.addEventListener('keyup', (e) => {
+   // Allows player to use physical computer keyboard to enter guesses.
+   if (overlayDiv.style.display === 'none')
+      keysArray.forEach(key => {
+         if(key.textContent === e.key) {
+            game.handleInteraction(key);
+         };
+      });
+   
+   // Allows the user to press 'Enter' on the keyboard to create a new instance of the game.   
+   if (overlayDiv.style.display !== 'none') {
+     if (e.keyCode === 13) {
+         game = new Game();
+         game.startGame();
+      };
+    };
+ });
